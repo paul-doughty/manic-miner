@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     bool cheat = false;
     int lives = 2;
     int teleport = -1;
-    int zoom = 2;
+    int zoom = 4;
 
     if (!getOptions(argc, argv, teleport, fps, lives, cheat, zoom)) {
         return 0;
