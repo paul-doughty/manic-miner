@@ -1208,24 +1208,6 @@ void printHighScore(int highestScore) {
     Speccy_printString(&score, 20587, 6);
 }
 
-void playGameMusic() {
-    // Increment the in-game music note index at NOTEINDEX.
-    game.NOTEINDEX++;
-
-    // Point HL at the appropriate entry in the tune data table at GAMETUNE.
-    uint8_t index = Speccy_rotR((uint8_t) (game.NOTEINDEX & 126), 1);
-
-    // Pick up the border colour for the current cavern from BORDER.
-    // uint8_t border = cavern.BORDER;
-
-    // Initialise the pitch delay counter in E.
-    int pitch = GAMETUNE[index];
-
-    // Initialise the duration delay counters in B (0) and C (3)...3 milliseconds
-    // Produce a note of the in-game music.
-    Speccy_beep(pitch, 32, 3);
-}
-
 void copyScrBufToDisplayFile() {
     // Copy the contents of the screen buffer at 24576 to the display file.
     // FIXME: all good, uses the Display File

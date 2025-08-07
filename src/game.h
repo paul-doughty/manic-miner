@@ -111,7 +111,6 @@ void awardExtraLife();
 void printCurrentScore(int currentScore);
 void printHighScore(int highestScore);
 void printScores();
-void playGameMusic();
 bool MANDEAD();
 void ENDGAM();
 void DRAWSHEET();

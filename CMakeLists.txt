@@ -117,6 +117,8 @@ set(SOURCE_FILES
         ${source_dir}/speccy_font.cpp
         ${source_dir}/willy.cpp
         ${source_dir}/window.cpp
+        src/sound_engine.h
+        src/sound_engine.cpp
 )
 
 #

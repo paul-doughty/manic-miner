@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "version.h"
 #include <unistd.h>  // for getopt
+#include "sound_engine.h"   // for strtol
 
 static bool getOptions(int argc, char **argv, int &teleport, int &fps, int &lives, bool &cheat, int &zoom);
 // The game has just loaded
@@ -23,6 +24,14 @@ int main(int argc, char *argv[]) {
         printf("Game initialization failure. Can not continue.");
         return -1;
     }
+    if (!SoundEngine::initialize()) {
+        printf("Sound initialization failure. Sound will be disabled.\n");
+        game.playMusic = false;
+    } else {
+        game.playMusic = true;  // Make sure this is set
+        printf("Sound system initialized successfully.\n");
+    }
+
 
     Game_initialize(cheat, teleport);
 
@@ -45,6 +54,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    SoundEngine::clear();
     Speccy_quit();
 
     printf("You helped Miner Willy acquire treasure worth %d.\n", game.highScore);
