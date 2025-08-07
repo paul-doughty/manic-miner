@@ -4,9 +4,9 @@
 #include "headers.h"
 #include "globals.h"
 #include "version.h"
+#include <unistd.h>  // for getopt
 
 static bool getOptions(int argc, char **argv, int &teleport, int &fps, int &lives, bool &cheat, int &zoom);
-
 // The game has just loaded
 int main(int argc, char *argv[]) {
     int fps = 50;
@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
 bool getOptions(int argc, char **argv, int &teleport, int &fps, int &lives, bool &cheat, int &zoom) {
     int c;
     int cavernNumber;
+    extern char *optarg; // Add this line to declare optarg as external
 
     while ((c = getopt(argc, argv, "cl:s:t:z:h")) != -1) {
         switch (c) {
