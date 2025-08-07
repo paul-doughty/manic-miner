@@ -5,7 +5,7 @@
 #include "globals.h"
 #include "version.h"
 #include <unistd.h>  // for getopt
-#include "sound_engine.h"   // for strtol
+#include "sound_engine.h"
 
 static bool getOptions(int argc, char **argv, int &teleport, int &fps, int &lives, bool &cheat, int &zoom);
 // The game has just loaded
