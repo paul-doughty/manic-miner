@@ -114,7 +114,7 @@ void printScores();
 bool MANDEAD();
 void ENDGAM();
 void DRAWSHEET();
-bool MOVEWILLY(int keyIntput);
+bool MOVEWILLY(int keyInput);
 void CRUMBLE(uint16_t addr);
 void DRAWITEMS();
 bool CHKPORTAL();
