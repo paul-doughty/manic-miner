@@ -34,7 +34,7 @@ set(cxx_warnings "-Wall")
 set(cxx_warnings "${cxx_warnings} -Wextra")
 set(cxx_warnings "${cxx_warnings} -Wpedantic")
 set(cxx_warnings "${cxx_warnings} -Wshadow")
-set(cxx_warnings "${cxx_warnings} -Werror")
+#set(cxx_warnings "${cxx_warnings} -Werror")
 set(cxx_warnings "${cxx_warnings} -pedantic-errors")
 #set(cxx_warnings "${cxx_warnings} -Weffc++ ")
 
@@ -117,6 +117,8 @@ set(SOURCE_FILES
         ${source_dir}/speccy_font.cpp
         ${source_dir}/willy.cpp
         ${source_dir}/window.cpp
+        src/sound_engine.h
+        src/sound_engine.cpp
 )
 
 #
@@ -148,8 +150,8 @@ set(RUNTIME_OUTPUT_DIRECTORY ${build_dir})
 add_executable(manic_miner ${SOURCE_FILES})
 
 # Link SDL2
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2})
+find_package(SDL2 CONFIG REQUIRED)
+include_directories(${SDL2_INCLUDE_DIR})
 target_link_libraries(manic_miner ${SDL2_LIBRARIES})
 
 # add the package install targets

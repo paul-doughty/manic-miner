@@ -1,73 +1,46 @@
-// Manic Miner C/C++ port Copyright (c) 2016-2021 Michael R. Cook
-// Manic Miner Copyright (c) 1983 Bug-Byte Ltd.
-
 #include "globals.h"
 #include "helpers.h"
 #include "data.h"
 #include "music.h"
+#include "sound_engine.h"
 
-// Play the theme tune (The Blue Danube).
-//
-// Returns with the zero flag reset if ENTER or the fire button
-// is pressed while the tune is being played.
-//
-// IY THEMETUNE (tune data)
 bool PLAYTUNE() {
     uint8_t freq1;
     uint8_t freq2;
     uint16_t addr;
 
+    SoundEngine::clear();
+
     for (auto &note : THEMETUNE) {
         const int start_time_ms = getTickCount();
 
-        // Copy the first byte of data for this note (which determines the duration) to C
         uint8_t duration = note[0];
-
-        // Pick up the second byte of data for this note. Copy it to A.
         freq1 = note[1];
-        // Calculate the attribute file address for the corresponding piano key.
         addr = PIANOKEY(freq1);
-        // Set the attribute byte for the piano key to 80 (INK 0: PAPER 2: BRIGHT 1).
         Speccy_writeMemory(addr, 80);
 
-        // Pick up the third byte of data for this note.
-        // Copy it to A.
         freq2 = note[2];
-        // Calculate the attribute file address for the corresponding piano key.
         addr = PIANOKEY(freq2);
-        // Set the attribute byte for the piano key to 40 (INK 0: PAPER 5: BRIGHT 0).
         Speccy_writeMemory(addr, 40);
 
         Speccy_redrawWindow();
 
-        // Produce a sound based on the frequency parameters in the second
-        // and third bytes of data for this note (copied into D and E).
-        for (uint8_t d = duration; d > 0; d--) {
-            // Speccy_OUT(pitch);
-
-            if (freq1 == 0 || freq2 == 0) {
-                millisleep(d / 3);
-            } else if (d % 3 == 0) {
-                Speccy_beep(freq1, d, 5);
-                Speccy_beep(freq2, d, 5);
-            }
+        if (game.playMusic) {
+            SoundEngine::queueNote(freq1, freq2, duration);
+            millisleep(duration * 4);
+        } else {
+            millisleep(duration * 4);
         }
 
-        // Check whether ENTER or the fire button is being pressed.
         if (processInput() == Keyboard::MM_KEY_ENTER) {
+            SoundEngine::clear();
             return true;
         }
 
-        // Pick up the second byte of data for this note.
-        // Calculate the attribute file address for the corresponding piano key.
         addr = PIANOKEY(note[1]);
-        // Set the attribute byte for the piano key back to 56 (INK 0: PAPER 7: BRIGHT 0).
         Speccy_writeMemory(addr, 56);
 
-        // Pick up the third byte of data for this note.
-        // Calculate the attribute file address for the corresponding piano key.
         addr = PIANOKEY(note[2]);
-        // Set the attribute byte for the piano key back to 56 (INK 0: PAPER 7: BRIGHT 0).
         Speccy_writeMemory(addr, 56);
 
         Speccy_redrawWindow();
@@ -81,6 +54,30 @@ bool PLAYTUNE() {
 
     return false;
 }
+
+void playGameMusic() {
+    static int noteIndex = 0;
+    static int frameCounter = 0;
+
+    if (!game.playMusic) return;
+
+    // Only update the music every 2 frames to slow it down
+    frameCounter++;
+    if (frameCounter < 2) {
+        return;
+    }
+    frameCounter = 0;
+
+    // Get the current note from GAMETUNE
+    uint8_t note = GAMETUNE[noteIndex];
+
+    // Play the note using new method
+    SoundEngine::playInGameMusic(note);
+
+    // Move to next note
+    noteIndex = (noteIndex + 1) % 64;  // GAMETUNE has 64 notes
+}
+
 
 // Calculate the attribute file address for a piano key.
 // Returns with the attribute file address in HL.

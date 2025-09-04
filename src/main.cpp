@@ -4,16 +4,17 @@
 #include "headers.h"
 #include "globals.h"
 #include "version.h"
+#include <unistd.h>  // for getopt
+#include "sound_engine.h"
 
 static bool getOptions(int argc, char **argv, int &teleport, int &fps, int &lives, bool &cheat, int &zoom);
-
 // The game has just loaded
 int main(int argc, char *argv[]) {
     int fps = 50;
     bool cheat = false;
     int lives = 2;
     int teleport = -1;
-    int zoom = 2;
+    int zoom = 4;
 
     if (!getOptions(argc, argv, teleport, fps, lives, cheat, zoom)) {
         return 0;
@@ -23,6 +24,14 @@ int main(int argc, char *argv[]) {
         printf("Game initialization failure. Can not continue.");
         return -1;
     }
+    if (!SoundEngine::initialize()) {
+        printf("Sound initialization failure. Sound will be disabled.\n");
+        game.playMusic = false;
+    } else {
+        game.playMusic = true;  // Make sure this is set
+        printf("Sound system initialized successfully.\n");
+    }
+
 
     Game_initialize(cheat, teleport);
 
@@ -45,6 +54,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    SoundEngine::clear();
     Speccy_quit();
 
     printf("You helped Miner Willy acquire treasure worth %d.\n", game.highScore);
@@ -58,6 +68,7 @@ int main(int argc, char *argv[]) {
 bool getOptions(int argc, char **argv, int &teleport, int &fps, int &lives, bool &cheat, int &zoom) {
     int c;
     int cavernNumber;
+    extern char *optarg; // Add this line to declare optarg as external
 
     while ((c = getopt(argc, argv, "cl:s:t:z:h")) != -1) {
         switch (c) {

@@ -8,3 +8,5 @@
 bool PLAYTUNE();
 
 uint16_t PIANOKEY(uint8_t frequency);
+void playGameMusic();
+

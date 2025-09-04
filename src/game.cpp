@@ -78,7 +78,7 @@ bool Game_play() {
     Speccy_clearDisplayFile();
 
     // Store the keyboard input for use within the loop.
-    int keyIntput;
+    int keyInput;
 
     // Yup, the game has started successfully.
     gameIsRunning = true;
@@ -99,17 +99,17 @@ bool Game_play() {
         // Next, prepare the screen and attribute buffers for drawing to the screen.
         resetScreenAttrBuffers();
 
-        keyIntput = processInput();
+        keyInput = processInput();
 
         // Check to see if the user muted the in-game music, or paused, or wants to quit.
-        switch (keyIntput) {
+        switch (keyInput) {
             case Keyboard::MM_KEY_MUTE:
                 game.playMusic = !game.playMusic;
                 break;
             case Keyboard::MM_KEY_QUIT:
                 return true; // return true so we quit the game!
             case Keyboard::MM_KEY_PAUSE:
-                keyIntput = Keyboard::MM_KEY_NONE;
+                keyInput = Keyboard::MM_KEY_NONE;
 
                 do {
                     Speccy_tick();
@@ -132,7 +132,7 @@ bool Game_play() {
         // buffer at 23552, and draw Willy to the screen buffer at 24576.
         if (game.DEMO == 0) {
             // Move Willy
-            if (MOVEWILLY(keyIntput)) {
+            if (MOVEWILLY(keyInput)) {
                 goto LOOP_4; // Willy has died!
             }
             // Draw Willy
@@ -220,7 +220,7 @@ bool Game_play() {
             // Update the game mode indicator at DEMO.
             game.DEMO--;
 
-            if (keyIntput == Keyboard::MM_KEY_ENTER) {
+            if (keyInput == Keyboard::MM_KEY_ENTER) {
                 reinitialiseCavern = true;
                 gameIsRunning = false;
                 break;
@@ -571,7 +571,7 @@ void DRAWSHEET() {
 // Move Willy (1)
 // This routine deals with Willy if he's jumping or falling.
 // IMPORTANT: return value is Willy's "death" state: true/false -MRC-
-bool MOVEWILLY(int keyIntput) {
+bool MOVEWILLY(int keyInput) {
     // Has Willy finished jumping?
     if (willy.AIRBORNE == 1 && Willy_updateJumpingState()) {
         // Willy has finished jumping.
@@ -625,12 +625,12 @@ bool MOVEWILLY(int keyIntput) {
 
                 // Is the right-hand cell below Willy's sprite empty?
                 if (Speccy_readMemory(addr) != cavern.BACKGROUND.id) {
-                    return Willy_getUserInputAndMove(keyIntput, addr);
+                    return Willy_getUserInputAndMove(keyInput, addr);
                 }
                 addr--;
                 // Is the left-hand cell below Willy's sprite empty?
                 if (Speccy_readMemory(addr) != cavern.BACKGROUND.id) {
-                    return Willy_getUserInputAndMove(keyIntput, addr);
+                    return Willy_getUserInputAndMove(keyInput, addr);
                 }
             }
         }
@@ -1206,24 +1206,6 @@ void printHighScore(int highestScore) {
 
     // Print the high score (see HGHSCOR) at (19,11).
     Speccy_printString(&score, 20587, 6);
-}
-
-void playGameMusic() {
-    // Increment the in-game music note index at NOTEINDEX.
-    game.NOTEINDEX++;
-
-    // Point HL at the appropriate entry in the tune data table at GAMETUNE.
-    uint8_t index = Speccy_rotR((uint8_t) (game.NOTEINDEX & 126), 1);
-
-    // Pick up the border colour for the current cavern from BORDER.
-    // uint8_t border = cavern.BORDER;
-
-    // Initialise the pitch delay counter in E.
-    int pitch = GAMETUNE[index];
-
-    // Initialise the duration delay counters in B (0) and C (3)...3 milliseconds
-    // Produce a note of the in-game music.
-    Speccy_beep(pitch, 32, 3);
 }
 
 void copyScrBufToDisplayFile() {
