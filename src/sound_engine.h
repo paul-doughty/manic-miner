@@ -1,6 +1,6 @@
 // sound_engine.h
 #pragma once
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <queue>
 #include <mutex>
 

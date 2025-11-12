@@ -6,7 +6,7 @@
 #include "speccy_colour.h"
 #include "speccy.h"
 #include "speccy_display.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <string>
 
 //Screen dimension constants
